@@ -44,3 +44,12 @@ RfidBusRequestSender.prototype.SendStartReading = function(readerId)
 
 	this._SendingRequest(msg);
 };
+
+RfidBusRequestSender.prototype.SendEnableDecodeEpc = function(readerId)
+{
+	var msg = new Object();
+	msg.Name = "EnableDecodeEpc";
+	msg.ReaderId = readerId;
+
+	this._SendingRequest(msg);
+};
