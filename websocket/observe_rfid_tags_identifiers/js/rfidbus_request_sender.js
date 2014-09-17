@@ -10,37 +10,41 @@ RfidBusRequestSender.prototype._SendingRequest = function(request)
 
 RfidBusRequestSender.prototype.SendAuthorize = function(login, password, token)
 {
-	var msg = new Object();
-	msg.Name = "Authorize";
-	msg.Login = login;
-	msg.Password = password;
-	msg.Token = token;
+	var msg = {
+		Name: "Authorize",
+		Login: login,
+		Password: password,
+		Token: token
+	};
 
 	this._SendingRequest(msg);
 };
 
 RfidBusRequestSender.prototype.SendGetReaders = function()
 {
-	var msg = new Object();
-	msg.Name = "GetReaders";
+	var msg = {
+		Name: "GetReaders"
+	};
 
 	this._SendingRequest(msg);
 };
 
 RfidBusRequestSender.prototype.SendSubscribeToReader = function(readerId)
 {
-	var msg = new Object();
-	msg.Name = "SubscribeToReader";
-	msg.ReaderId = readerId;
+	var msg = {
+		Name: "SubscribeToReader",
+		ReaderId: readerId
+	};
 
 	this._SendingRequest(msg);
 };
 
 RfidBusRequestSender.prototype.SendStartReading = function(readerId)
 {
-	var msg = new Object();
-	msg.Name = "StartReading";
-	msg.ReaderId = readerId;
+	var msg = {
+		Name : "StartReading",
+		ReaderId : readerId
+	};
 
 	this._SendingRequest(msg);
 };
