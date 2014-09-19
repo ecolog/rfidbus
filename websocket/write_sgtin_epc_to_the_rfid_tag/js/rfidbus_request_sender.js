@@ -53,9 +53,9 @@ RfidBusRequestSender.prototype.SendWriteEpcSgtin96 = function(readerId,
 															  antennaId,
 															  transponderType,
 															  transponderId,
-															  table, // TODO: rename
+															  partition,
 															  epcFilter,
-															  gln, // TODO: rename
+															  gcp,
 															  item,
 															  serial
 															  )
@@ -70,9 +70,9 @@ RfidBusRequestSender.prototype.SendWriteEpcSgtin96 = function(readerId,
 			Id: parseHexStrToBase64(transponderId),
 			BlockSize: RfidTransponder.GetTransponderBlockSize(transponderType)
 		},
-		Table: table,
+		Partition: partition,
 		EpcFilter: epcFilter,
-		Gln: gln,
+		Gcp: gcp,
 		Item: item,
 		Serial: serial
 	});
