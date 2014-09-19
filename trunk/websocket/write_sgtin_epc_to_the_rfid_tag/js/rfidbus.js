@@ -63,7 +63,7 @@ $(document).ready(function() {
 
 	$("#tags").change(function() {
 		$("#filter").val( $("#tags option:selected").attr("Epc:Filter") );
-		$("#gln").val( $("#tags option:selected").attr("Epc:Gln") );
+		$("#gcp").val( $("#tags option:selected").attr("Epc:Gcp") );
 		$("#item").val( $("#tags option:selected").attr("Epc:Item") );
 		$("#serial").val( $("#tags option:selected").attr("Epc:Serial") );
 	});
@@ -76,7 +76,7 @@ $(document).ready(function() {
 			$("#tags option:selected").val(),
 			3, // See: Table 14-2 SGTIN Partition Table
 			$("#filter").val(),
-			$("#gln").val(),
+			$("#gcp").val(),
 			$("#item").val(),
 			$("#serial").val()
 			);
