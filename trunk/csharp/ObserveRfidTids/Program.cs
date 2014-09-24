@@ -15,10 +15,10 @@ namespace RfidBusClientExample
 
         private static void Main()
         {
-            var programm = new Program();
+            var program = new Program();
             try
             {
-                programm.DoWork();
+                program.DoWork();
             }
             catch(Exception ex)
             {
@@ -26,7 +26,7 @@ namespace RfidBusClientExample
             }
             finally
             {
-                programm.Finish();
+                program.Finish();
 
                 WaitForKey("Press ENTER to exit.", ConsoleKey.Enter);
             }
