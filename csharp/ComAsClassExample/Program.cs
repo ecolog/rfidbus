@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+ *  Использование COM объекта в качестве обычного класса для .NET не является предусмотренным. Используйте вместо него RfidBusClient.
+ */
+
+using System;
 
 using RfidBus.Com;
 
