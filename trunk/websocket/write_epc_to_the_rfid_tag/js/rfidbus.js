@@ -9,6 +9,9 @@ $(document).ready(function() {
 	});
 
 	responseHandler.AddHandler("GetTranspondersResponse", function(msg) {
+		if (!msg.Transponders) {
+			return;
+		}
 		msg.Transponders.forEach(function (tag) {
 			$("#tags").append( $('<option />')
 					.text(tag.IdAsString)
