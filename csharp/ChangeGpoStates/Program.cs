@@ -25,6 +25,7 @@ namespace ChangeGpoStates
             var program = new Program();
             try
             {
+                program.Initialize();
                 program.DoWork();
             }
             catch (Exception ex)
@@ -39,7 +40,7 @@ namespace ChangeGpoStates
             }
         }
 
-        private void DoWork()
+        private void Initialize()
         {
             Console.WriteLine("Establishing connection to RFID Bus...");
             var protocol = new PbCommunicationDescription();
@@ -57,19 +58,26 @@ namespace ChangeGpoStates
             if (!this._client.Authorize("admin", "admin"))
                 throw new Exception("Invalid login-password.");
             Console.WriteLine("Connection established.");
+        }
 
-            this._client.ReceivedEvent += this.RfidBusClientOnReceivedEvent;
+        private void DoWork()
+        {
+            if (this._client != null && this._client.IsConnected)
+            {
+                this._client.ReceivedEvent += this.RfidBusClientOnReceivedEvent;
 
-            Console.WriteLine("Getting readers ...");
-            var readersResult = this._client.SendRequest(new GetReaders());
-            if (readersResult.Status != ResponseStatus.Ok)
-                throw new Exception(string.Format("Can't get info about connected readers. Reason: {0}.",
-                    readersResult.Status));
+                Console.WriteLine("Getting readers ...");
+                var readersResult = this._client.SendRequest(new GetReaders());
+                if (readersResult.Status != ResponseStatus.Ok)
+                    throw new Exception(string.Format("Can't get info about connected readers. Reason: {0}.",
+                        readersResult.Status));
 
-            _cancelSource = new CancellationTokenSource();
-            ChanchingReadersGpoWork(readersResult.Readers, _cancelSource.Token);
+                _cancelSource = new CancellationTokenSource();
+                ChanchingReadersGpoWork(readersResult.Readers, _cancelSource.Token);
 
-            WaitForKey("Press ESC to stop.", ConsoleKey.Escape);
+                WaitForKey("Press ESC to stop.", ConsoleKey.Escape);
+                _cancelSource.Cancel();
+            }
         }
 
         private async void ChanchingReadersGpoWork(IEnumerable<ReaderRecord> readers, CancellationToken token)
@@ -98,16 +106,16 @@ namespace ChangeGpoStates
 
         private void SetReaderGpoStates(ReaderRecord reader, bool state)
         {
-            for (var i = 1; i <= 4; i++)
-            {
-                var result = _client.SendRequest(new SetReaderGpoStates(reader.Id, new[]
+            var result = _client.SendRequest(new SetReaderGpoStates(reader.Id, new[]
                 {
-                    new GpoStateRecord(i, state)
+                    new GpoStateRecord(1, state),
+                    new GpoStateRecord(2, state),
+                    new GpoStateRecord(3, state),
+                    new GpoStateRecord(4, state),
                 }));
 
-                Console.WriteLine("Reader: {0} ({1}). GPO port: {2}, value: {3}, status: {4}", reader.Name,
-                    reader.Id, i, state, result.Status);
-            }
+            Console.WriteLine("Reader: {0} ({1}). GPO ports: 1, 2, 3, 4, value: {2}, status: {3}", reader.Name,
+                reader.Id, state, result.Status);
         }
 
         private void RfidBusClientOnReceivedEvent(object sender, ReceivedEventEventArgs args)
@@ -142,7 +150,6 @@ namespace ChangeGpoStates
                 .Key != key)
             {
             }
-            _cancelSource.Cancel();
         }
     }
 }
