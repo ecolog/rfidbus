@@ -18,6 +18,7 @@ namespace RfidBusClientExample
             var program = new Program();
             try
             {
+                program.Initialize();
                 program.DoWork();
             }
             catch(Exception ex)
@@ -32,7 +33,7 @@ namespace RfidBusClientExample
             }
         }
 
-        private void DoWork()
+        private void Initialize()
         {
             Console.WriteLine("Establishing connection to RFID Bus...");
             var protocol = new PbCommunicationDescription();
@@ -41,32 +42,39 @@ namespace RfidBusClientExample
             config.SetValue(ConfigConstants.PARAMETER_PORT, 20000);
 
             this._client = new RfidBusClient(protocol, config)
-                           {
-                               AllowReconnect = true,
-                               RequestTimeOut = TimeSpan.FromSeconds(30),
-                           };
+            {
+                AllowReconnect = true,
+                RequestTimeOut = TimeSpan.FromSeconds(30),
+            };
             this._client.Connect();
 
-            if(!this._client.Authorize("admin", "admin"))
+            if (!this._client.Authorize("admin", "admin"))
                 throw new Exception("Invalid login-password.");
             Console.WriteLine("Connection established.");
+        }
 
-            this._client.ReceivedEvent += this.RfidBusClientOnReceivedEvent;
-
-            Console.WriteLine("Getting readers ...");
-            var readersResult = this._client.SendRequest(new GetReaders());
-            if(readersResult.Status != ResponseStatus.Ok)
-                throw new Exception(string.Format("Can't get info about connected readers. Reason: {0}.", readersResult.Status));
-
-            foreach(var record in readersResult.Readers)
+        private void DoWork()
+        {
+            if (this._client != null && this._client.IsConnected)
             {
-                Console.WriteLine(" * processing reader: {0}", record.Name);
+                this._client.ReceivedEvent += this.RfidBusClientOnReceivedEvent;
 
-                this._client.SendRequest(new SubscribeToReader(record.Id));
-                this._client.SendRequest(new StartReading(record.Id));
+                Console.WriteLine("Getting readers ...");
+                var readersResult = this._client.SendRequest(new GetReaders());
+                if (readersResult.Status != ResponseStatus.Ok)
+                    throw new Exception(string.Format("Can't get info about connected readers. Reason: {0}.",
+                        readersResult.Status));
+
+                foreach (var record in readersResult.Readers)
+                {
+                    Console.WriteLine(" * processing reader: {0}", record.Name);
+
+                    this._client.SendRequest(new SubscribeToReader(record.Id));
+                    this._client.SendRequest(new StartReading(record.Id));
+                }
+
+                WaitForKey("Press ESC to stop.", ConsoleKey.Escape);
             }
-
-            WaitForKey("Press ESC to stop.", ConsoleKey.Escape);
         }
 
         private void RfidBusClientOnReceivedEvent(object sender, ReceivedEventEventArgs args)
