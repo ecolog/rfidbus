@@ -33,7 +33,7 @@ $(document).ready(function() {
 	requestSender = new RfidBusRequestSender(webSocketClient, responseHandler);
 
 	webSocketClient.AddEventHandler(WebSocketClient.EVENT_ON_OPEN, function() {
-		requestSender.SendAuthorize("admin", "admin");
+		requestSender.SendAuthorize("demo", "demo");
 	});
 
 	webSocketClient.Open("ws://demo.rfidbus.rfidcenter.ru:80");
